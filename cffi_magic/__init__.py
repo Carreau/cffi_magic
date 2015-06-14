@@ -8,7 +8,7 @@ See `%%cffi?` for usage.
 Mostly playing with CFFI, feel free to contact me if you want to take over. 
 """
 
-__version__ ='0.0.1'
+__version__ ='0.0.2'
 
 
 
