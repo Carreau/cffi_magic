@@ -8,7 +8,9 @@ See `%%cffi?` for usage.
 Mostly playing with CFFI, feel free to contact me if you want to take over. 
 """
 
-__version__ ='0.0.3'
+from __future__ import print_function
+
+__version__ ='0.0.4'
 
 
 import re
@@ -142,10 +144,10 @@ class CFFI(Magics):
 
         rname = '_cffi_%s' % ''.join([choice(string.ascii_letters) for _ in range(10)])
         with io.open('Cargo.toml','w') as f:
-            f.write(cargotoml.format(name=rname))
+            f.write(cargotoml.format(name=rname).encode('utf-8'))
         try:
             os.mkdir('src')
-        except FileExistsError:
+        except OSError:
             pass
         with io.open('src/lib.rs', 'w') as f:
             f.write(cell)
@@ -155,7 +157,7 @@ class CFFI(Magics):
         exports =  re.findall('([a-zA-Z_]+)\(', line)
         for attr in exports:
             self.shell.user_ns[attr] = getattr(mod, attr)
-            print("injecting ", attr, "in user ns")
+            print("injecting `%s` in user ns" % (attr,))
             #self.shell.user_ns['%s_ffi'%attr] = mod.ffi
 
 
