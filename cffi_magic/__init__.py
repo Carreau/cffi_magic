@@ -10,7 +10,7 @@ Mostly playing with CFFI, feel free to contact me if you want to take over.
 
 from __future__ import print_function
 
-__version__ ='0.0.4'
+__version__ ='0.0.5'
 
 
 import re
