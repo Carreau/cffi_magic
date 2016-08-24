@@ -1,4 +1,4 @@
-# CFFI magi
+# CFFI magic
 
 Quick iteration of cffi in notebooks.
 
