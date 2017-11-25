@@ -10,9 +10,6 @@ Mostly playing with CFFI, feel free to contact me if you want to take over.
 
 from __future__ import print_function
 
-__version__ ='0.0.5'
-
-
 import re
 from cffi import FFI
 from random import choice
@@ -20,12 +17,13 @@ import string
 import logging
 import subprocess
 
-log = logging.getLogger(__name__)
-
 from IPython.core.magic import Magics, magics_class, cell_magic
 
 import io
 import os
+
+__version__ ='0.0.6'
+log = logging.getLogger(__name__)
 
 
 cargotoml="""
@@ -72,7 +70,7 @@ class CFFI(Magics):
         mod = __import__(rname)
         for attr in dir(mod.lib):
             self.shell.user_ns[attr] = getattr(mod.lib, attr)
-            self.shell.user_ns['%s_ffi'%attr] = mod.ffi
+            self.shell.user_ns['%s_ffi' % attr] = mod.ffi
 
     @cell_magic
     def rust(self, line, cell):
@@ -143,14 +141,14 @@ class CFFI(Magics):
         ffi = FFI()
 
         rname = '_cffi_%s' % ''.join([choice(string.ascii_letters) for _ in range(10)])
-        with io.open('Cargo.toml','w') as f:
+        with io.open('Cargo.toml','wb') as f:
             f.write(cargotoml.format(name=rname).encode('utf-8'))
         try:
             os.mkdir('src')
         except OSError:
             pass
-        with io.open('src/lib.rs', 'w') as f:
-            f.write(cell)
+        with io.open('src/lib.rs', 'wb') as f:
+            f.write(cell.encode())
         subprocess.call(["cargo", "build",'--release'])
         ffi.cdef(line)
         mod = ffi.dlopen("target/release/lib{name}.dylib".format(name=rname))
