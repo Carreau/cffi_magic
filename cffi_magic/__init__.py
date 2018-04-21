@@ -12,17 +12,19 @@ from __future__ import print_function
 
 import re
 from cffi import FFI
-from random import choice
+from hashlib import md5
 import string
 import logging
 import subprocess
 
 from IPython.core.magic import Magics, magics_class, cell_magic
 
+hash_code = lambda s:md5(s.encode()).hexdigest()
+
 import io
 import os
 
-__version__ ='0.0.7'
+__version__ ='0.0.8'
 log = logging.getLogger(__name__)
 
 
@@ -69,7 +71,7 @@ class CFFI(Magics):
 
         ffi = FFI()
 
-        rname = '_cffi_%s' % ''.join([choice(string.ascii_letters) for _ in range(10)])
+        rname = '_cffi_%s' % hash_code(line+cell)
         ffi.cdef(line)
         ffi.set_source(rname, cell)
         ffi.compile()
@@ -146,7 +148,7 @@ class CFFI(Magics):
         """
         ffi = FFI()
 
-        rname = '_cffi_%s' % ''.join([choice(string.ascii_letters) for _ in range(10)])
+        rname = '_cffi_%s' % hash_code(line+cell)
         with io.open('Cargo.toml','wb') as f:
             f.write(cargotoml.format(name=rname).encode('utf-8'))
         try:
