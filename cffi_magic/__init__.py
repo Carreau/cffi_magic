@@ -22,7 +22,7 @@ from IPython.core.magic import Magics, magics_class, cell_magic
 import io
 import os
 
-__version__ ='0.0.6'
+__version__ ='0.0.7'
 log = logging.getLogger(__name__)
 
 
@@ -41,6 +41,12 @@ crate-type = ["dylib"]
 
 libc = "0.1"
 """
+
+from sys import platform 
+if platform == 'darwin':
+    ext ='dylib'
+else:
+    ext = 'so'
 
 @magics_class
 class CFFI(Magics):
@@ -151,7 +157,7 @@ class CFFI(Magics):
             f.write(cell.encode())
         subprocess.call(["cargo", "build",'--release'])
         ffi.cdef(line)
-        mod = ffi.dlopen("target/release/lib{name}.dylib".format(name=rname))
+        mod = ffi.dlopen("target/release/lib{name}.{ext}".format(name=rname, ext=ext))
         exports =  re.findall('([a-zA-Z_]+)\(', line)
         for attr in exports:
             self.shell.user_ns[attr] = getattr(mod, attr)
