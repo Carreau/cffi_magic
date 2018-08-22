@@ -44,9 +44,14 @@ crate-type = ["dylib"]
 libc = "0.1"
 """
 
-from sys import platform 
+lib_pre = 'lib'
+
+from sys import platform
 if platform == 'darwin':
-    ext ='dylib'
+    ext = 'dylib'
+elif platform == 'win32':
+    lib_pre = ''
+    ext = 'dll'
 else:
     ext = 'so'
 
@@ -159,7 +164,7 @@ class CFFI(Magics):
             f.write(cell.encode())
         subprocess.call(["cargo", "build",'--release'])
         ffi.cdef(line)
-        mod = ffi.dlopen("target/release/lib{name}.{ext}".format(name=rname, ext=ext))
+        mod = ffi.dlopen("target/release/{pre}{name}.{ext}".format(name=rname, pre=lib_pre, ext=ext))
         exports =  re.findall('([a-zA-Z_]+)\(', line)
         for attr in exports:
             self.shell.user_ns[attr] = getattr(mod, attr)
