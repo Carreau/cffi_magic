@@ -24,7 +24,7 @@ hash_code = lambda s:md5(s.encode()).hexdigest()
 import io
 import os
 
-__version__ ='0.0.8'
+__version__ ='0.0.9'
 log = logging.getLogger(__name__)
 
 
